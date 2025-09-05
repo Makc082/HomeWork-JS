@@ -1,0 +1,41 @@
+<!doctype html>
+<html class="no-js" lang="">
+
+<body>
+<script>
+  let Parrot = {
+    name: "Rich",
+    color: "blue",
+    age_in_month: 3
+  };
+
+  let Telephone = {
+    name: "Samsung",
+    width: 8,
+    height: 16
+  };
+
+let Printer = {
+  name: "Canon",
+  color: "Black",
+  weight: 4
+}
+
+const array = [Parrot, Telephone, Printer];
+
+  function sortByName(array) {
+    return array.sort((a, b) => {
+      if (a.name < b.name) return -1;
+      if (a.name > b.name) return 1;
+      return 0;
+    });
+  }
+
+  let sortedItems = sortByName(array);
+
+  console.log(sortedItems);
+</script>
+
+</body>
+
+</html>
