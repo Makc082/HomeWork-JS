@@ -1,70 +1,41 @@
 <!doctype html>
 <html class="no-js" lang="">
-<head>
 
-  <title> Футбольне поле з м'ячем </title>
-
-  <style>
-    html, body {
-      /* сторінка на всю висоту */
-      margin: 0;
-      height: 100%;
-    }
-
-    /* поле */
-    #field {
-      position: relative;
-      width: 100vw;
-      height: 100vh;
-      background: url("img/1680385263_pictures-pibig-info-p-futbolnoe-pole-risunok-instagram-3.jpg") no-repeat center center;
-      background-size: cover;
-      cursor: crosshair;
-    }
-
-    /* м’яч */
-    #ball {
-      position: absolute;
-      width: 100px;
-      height: 100px;
-      background: url("img/ball_transparent_fixed.png") no-repeat center center;
-      background-size: contain;
-      pointer-events: none; /* щоб не заважав клікам */
-      transition: left 0.4s ease, top 0.4s ease; /* плавний рух */
-    }
-  </style>
-</head>
 <body>
-<div id="field">
-  <div id="ball"></div>
-</div>
-
 <script>
-  // знаходимо поле і м'яч
-  const field = document.getElementById("field");
-  const ball = document.getElementById("ball");
+  let Parrot = {
+    name: "Rich",
+    color: "blue",
+    age_in_month: 3
+  };
 
-  // розмір м'яча
-  const ballSize = 100;
-  const radius = ballSize / 2;
+  let Telephone = {
+    name: "Samsung",
+    width: 8,
+    height: 16
+  };
 
-  // початково ставимо м'яч у центр
-  ball.style.left = (field.clientWidth / 2 - radius) + "px";
-  ball.style.top  = (field.clientHeight / 2 - radius) + "px";
+let Printer = {
+  name: "Canon",
+  color: "Black",
+  weight: 4
+}
 
-  // при кліку по полю пересуваємо м'яч
-  field.addEventListener("click", function(e) {
-    const rect = field.getBoundingClientRect();
-    const x = e.clientX - rect.left; // координата X
-    const y = e.clientY - rect.top;  // координата Y
+const array = [Parrot, Telephone, Printer];
 
-    // м'яч не виходить за межі поля
-    const newX = Math.max(radius, Math.min(field.clientWidth - radius, x));
-    const newY = Math.max(radius, Math.min(field.clientHeight - radius, y));
+  function sortByName(array) {
+    return array.sort((a, b) => {
+      if (a.name < b.name) return -1;
+      if (a.name > b.name) return 1;
+      return 0;
+    });
+  }
 
-    // нові координати м’яча
-    ball.style.left = (newX - radius) + "px";
-    ball.style.top  = (newY - radius) + "px";
-  });
+  let sortedItems = sortByName(array);
+
+  console.log(sortedItems);
 </script>
+
 </body>
+
 </html>
