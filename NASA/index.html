@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>NASA + Курси валют</title>
+  <style>
+    body {
+      font-family: monospace;
+      background-color: #111;
+      color: #0ff;
+      padding: 2rem;
+    }
+    h1, h2 {
+      text-align: center;
+    }
+    .section {
+      background-color: #222;
+      padding: 1rem;
+      margin: 1rem 0;
+      border-radius: 8px;
+    }
+    input, button {
+      background-color: #111;
+      color: #0ff;
+      border: 1px solid #0ff;
+      padding: 0.3rem;
+      margin: 0.5rem 0;
+    }
+    img {
+      max-width: 100%;
+      border-radius: 8px;
+      margin: 1rem 0;
+    }
+    .json-box {
+      background-color: #000;
+      padding: 1rem;
+      border-radius: 8px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      margin-top: 1rem;
+    }
+    .item {
+      margin: 0.5rem 0;
+    }
+  </style>
+</head>
+<body>
+<h1>NASA APOD + Курси валют</h1>
+
+<div class="section">
+  <h2>Картинка дня (NASA)</h2>
+  <label>Виберіть дату:
+    <input type="date" id="dateInput">
+  </label>
+  <button id="loadApod">Показати</button>
+  <div id="apodResult"></div>
+  <div id="apodJson" class="json-box"></div>
+</div>
+
+<div class="section">
+  <h2>Курси валют (Minfin)</h2>
+  <div id="rates"></div>
+  <div id="ratesJson" class="json-box"></div>
+</div>
+
+<script>
+  // функція JSON
+  function renderJson(obj, container) {
+    container.textContent = JSON.stringify(obj, null, 2);
+  }
+
+  // NASA APOD клас
+  class Apod {
+    constructor(data) {
+      this.date = data.date;
+      this.title = data.title;
+      this.explanation = data.explanation;
+      this.url = data.url;
+    }
+  }
+
+  // NASA API
+  const NASA_KEY = "aPV1QfHQtwFafGu0GAumF5hjxiXKx7UT6fvXVDqP";
+  async function loadApod(date) {
+    try {
+      const url = `https://api.nasa.gov/planetary/apod?api_key=${NASA_KEY}${date ? "&date=" + date : ""}`;
+      const response = await fetch(url);
+      if (!response.ok) throw new Error("Помилка завантаження NASA API");
+      const data = await response.json();
+      const apod = new Apod(data);
+
+      document.getElementById("apodResult").innerHTML = `
+        <div><b>${apod.title}</b> (${apod.date})</div>
+        <img src="${apod.url}" alt="${apod.title}">
+        <div>${apod.explanation}</div>
+      `;
+
+      renderJson(apod, document.getElementById("apodJson"));
+
+    } catch (err) {
+      document.getElementById("apodResult").textContent = "Помилка: " + err.message;
+    }
+  }
+
+  document.getElementById("loadApod").addEventListener("click", () => {
+    const date = document.getElementById("dateInput").value;
+    loadApod(date);
+  });
+
+  // Minfin API
+  const API_KEY = "b451234c2d56f7bfe7940070c2151b5aa4db1c2c";
+  const API_URL = `https://api.minfin.com.ua/mb/${API_KEY}/`;
+
+  async function loadRates() {
+    try {
+      const response = await fetch(API_URL);
+      const data = await response.json();
+
+      const latest = {};
+      for (let item of data) {
+        if (item.currency && !latest[item.currency]) {
+          latest[item.currency] = item;
+        }
+      }
+
+      const ratesDiv = document.getElementById("rates");
+      ratesDiv.innerHTML = "";
+      for (let c in latest) {
+        const div = document.createElement("div");
+        div.className = "item";
+        div.textContent = `${c.toUpperCase()}: Купівля — ${latest[c].bid},
+         Продаж — ${latest[c].ask} (час: ${latest[c].pointDate})`;
+        ratesDiv.appendChild(div);
+      }
+
+      renderJson(latest, document.getElementById("ratesJson"));
+
+    } catch (err) {
+      document.getElementById("rates").textContent = "Помилка завантаження валют: " + err.message;
+    }
+  }
+
+  // запуск при завантаженні
+  loadApod(); // сьогоднішня дата
+  loadRates();
+</script>
+</body>
+</html>
